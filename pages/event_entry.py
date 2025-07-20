@@ -1,78 +1,77 @@
 import streamlit as st
 import duckdb
-from datetime import date
 
 st.title("Event Entry")
 
+# Connect to DuckDB
 conn = duckdb.connect("motherduck.duckdb")
 
-# Create events and athlete_checkins tables if not exist
+# Ensure necessary tables exist
 conn.execute("""
 CREATE TABLE IF NOT EXISTS events (
-    id INTEGER PRIMARY KEY,
+    id INTEGER,
     event_name TEXT,
     date TEXT
 )
 """)
+
 conn.execute("""
 CREATE TABLE IF NOT EXISTS athlete_checkins (
     athlete_id INTEGER,
     event_id INTEGER,
-    checkin_time TEXT
+    checkin_time TEXT,
+    bib_number TEXT
 )
 """)
+
 conn.execute("""
 CREATE TABLE IF NOT EXISTS athletes (
     id INTEGER,
     first_name TEXT,
     last_name TEXT,
-    group_id INTEGER,
-    bib_number TEXT
+    group_id INTEGER
 )
 """)
 
-# Add a new event form
+# Form to add a new event
 with st.form("add_event_form"):
     event_name = st.text_input("Event Name")
-    event_date = st.date_input("Event Date", value=date.today())
+    date = st.date_input("Event Date")
     submitted = st.form_submit_button("Add Event")
 
     if submitted:
-        if event_name.strip() == "":
+        if not event_name.strip():
             st.error("Event name cannot be empty.")
         else:
-            # Generate a new event ID manually
-            max_id = conn.execute("SELECT MAX(id) FROM events").fetchone()[0]
-            new_id = (max_id + 1) if max_id is not None else 1
             try:
+                # Manually generate the next ID
+                max_id_result = conn.execute("SELECT COALESCE(MAX(id), 0) + 1 FROM events").fetchone()
+                next_id = max_id_result[0]
+
+                # Insert new event with generated ID
                 conn.execute(
                     "INSERT INTO events (id, event_name, date) VALUES (?, ?, ?)",
-                    (new_id, event_name, event_date.isoformat())
+                    [next_id, event_name.strip(), date.isoformat()]
                 )
-                st.success(f"Event '{event_name}' added successfully with ID {new_id}!")
+                st.success(f"Event '{event_name}' added successfully!")
             except Exception as e:
                 st.error(f"Error adding event: {e}")
 
-# Select event to view checked-in athletes
-st.subheader("View Checked-in Athletes")
+# Show all current events
+st.subheader("Current Events")
 
-events = conn.execute("SELECT id, event_name, date FROM events ORDER BY date DESC").fetchall()
-if events:
-    event_options = [f"{name} ({date})" for _, name, date in events]
-    selected_index = st.selectbox("Select Event", range(len(event_options)), format_func=lambda i: event_options[i])
-    selected_event_id = events[selected_index][0]
+events_df = conn.execute("""
+    SELECT 
+        e.event_name AS "Event Name",
+        e.date AS "Date",
+        COUNT(ac.athlete_id) AS "Athletes Checked In"
+    FROM events e
+    LEFT JOIN athlete_checkins ac ON e.id = ac.event_id
+    GROUP BY e.event_name, e.date
+    ORDER BY e.date DESC
+""").df()
 
-    checked_in_df = conn.execute("""
-        SELECT a.first_name, a.last_name, ac.bib_number, ac.checkin_time
-        FROM athlete_checkins ac
-        JOIN athletes a ON ac.athlete_id = a.id
-        WHERE ac.event_id = ?
-        ORDER BY ac.checkin_time
-    """, (selected_event_id,)).df()
-
-    if not checked_in_df.empty:
-        st.dataframe(checked_in_df)
-    else:
-        st.info("No athletes have checked in for this event yet.")
+if events_df.empty:
+    st.info("No events have been added yet.")
 else:
-    st.info("No events found. Please add some events.")
+    st.dataframe(events_df, use_container_width=True)
