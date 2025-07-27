@@ -52,13 +52,13 @@ if start_time is None:
 
 def get_athletes_by_group(group_id):
     query = """
-        SELECT a.id, a.first_name, a.last_name,
-            COALESCE(ac.bib_number, 'N/A') AS bib_number
+        SELECT a.id, a.nickname,
+                COALESCE(CAST(ac.bib_number AS TEXT), 'N/A') AS bib_number
         FROM athletes a
         LEFT JOIN athlete_checkins ac
             ON a.id = ac.athlete_id AND ac.event_id = ?
         WHERE a.group_id = ?
-        ORDER BY a.last_name, a.first_name
+        ORDER BY a.nickname
     """
     return conn.execute(query, [selected_event_id, group_id]).fetchall()
 
@@ -79,7 +79,6 @@ def record_split(athlete_id, split_id, split_seconds):
             [athlete_id, selected_event_id, split_id, split_seconds]
         )
 
-st.write(f"### Event: {events[selected_event_idx][1]} ({events[selected_event_idx][2]})")
 st.write(f"### Recording splits for: {SPLIT_LOCATIONS[selected_split_id]}")
 
 for group_id, group_name in ATHLETE_GROUPS.items():
@@ -91,13 +90,13 @@ for group_id, group_name in ATHLETE_GROUPS.items():
 
     cols = st.columns(4)
     for i, athlete in enumerate(athletes):
-        athlete_id, first_name, last_name, bib_number = athlete
-        label = f"{first_name} {last_name} (Bib: {bib_number})"
+        athlete_id, nickname, bib_number = athlete
+        label = f"{nickname} (Bib: {bib_number})"
         if cols[i % 4].button(label, key=f"{group_id}_{athlete_id}"):
             current_time = datetime.now()
             split_seconds = (current_time - start_time).total_seconds()
             try:
                 record_split(athlete_id, selected_split_id, split_seconds)
-                st.success(f"Split recorded for {first_name} {last_name}: {split_seconds:.2f} sec")
+                st.success(f"Split recorded for {nickname}: {split_seconds:.2f} sec")
             except Exception as e:
                 st.error(f"Error recording split: {e}")

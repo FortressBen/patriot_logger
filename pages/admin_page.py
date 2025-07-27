@@ -2,62 +2,58 @@ import streamlit as st
 import duckdb
 
 st.title("Admin Page")
+st.write("Administrative tools for database and configuration.")
 
-# Connect to the DuckDB database
 conn = duckdb.connect("motherduck.duckdb")
 
-# Section 1: Create tables button
-st.header("Initialize Database Tables")
+create_tables_sql = """
+CREATE TABLE IF NOT EXISTS athlete_groups (
+    id INTEGER,
+    group_name TEXT
+);
 
-if st.button("Create Tables"):
+CREATE TABLE IF NOT EXISTS athletes (
+    id INTEGER,
+    nickname TEXT,
+    group_id INTEGER,
+    recorder_nickname TEXT
+);
+
+CREATE TABLE IF NOT EXISTS events (
+    id INTEGER,
+    event_name TEXT,
+    date TEXT
+);
+
+CREATE TABLE IF NOT EXISTS split_ids (
+    id INTEGER,
+    description TEXT
+);
+
+CREATE TABLE IF NOT EXISTS split_times (
+    id INTEGER,
+    athlete_id INTEGER,
+    event_id INTEGER,
+    split_id INTEGER,
+    split_time DOUBLE
+);
+
+CREATE TABLE IF NOT EXISTS athlete_checkins (
+    id INTEGER,
+    athlete_id INTEGER,
+    event_id INTEGER,
+    checkin_time TEXT,
+    bib_number INTEGER
+);
+"""
+
+if st.button("Create Database Tables"):
     try:
-        conn.execute("""
-            CREATE TABLE IF NOT EXISTS athlete_groups (
-                id INTEGER,
-                name TEXT
-            );
-        """)
-        conn.execute("""
-            CREATE TABLE IF NOT EXISTS athletes (
-                id INTEGER,
-                first_name TEXT,
-                last_name TEXT,
-                group_id INTEGER,
-                bib_number TEXT
-            );
-        """)
-        conn.execute("""
-            CREATE TABLE IF NOT EXISTS events (
-                event_name TEXT,
-                date TEXT
-            );
-        """)
-        conn.execute("""
-            CREATE TABLE IF NOT EXISTS split_ids (
-                id INTEGER,
-                name TEXT
-            );
-        """)
-        conn.execute("""
-            CREATE TABLE IF NOT EXISTS split_times (
-                athlete_id INTEGER,
-                event_id INTEGER,
-                split_id INTEGER,
-                time_elapsed TEXT
-            );
-        """)
-        conn.execute("""
-            CREATE TABLE IF NOT EXISTS athlete_checkins (
-                athlete_id INTEGER,
-                event_id INTEGER,
-                checkin_time TEXT
-            );
-        """)
-        st.success("Tables created successfully.")
+        conn.execute(create_tables_sql)
+        st.success("Tables created successfully in motherduck.duckdb.")
     except Exception as e:
         st.error(f"Error creating tables: {e}")
 
-# Section 2: SQL Execution Tool
 st.header("Run Custom SQL")
 
 sql_input = st.text_area("Enter SQL statement", height=200)

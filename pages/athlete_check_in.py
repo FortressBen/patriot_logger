@@ -18,20 +18,20 @@ selected_event_id = events[selected_event_index][0]
 
 # Fetch athletes sorted by last name
 athletes = conn.execute("""
-    SELECT id, first_name, last_name
+    SELECT id, nickname
     FROM athletes
-    ORDER BY last_name, first_name
+    ORDER BY nickname
 """).fetchall()
 
 if not athletes:
     st.warning("No athletes found. Please upload athletes first.")
     st.stop()
 
-athlete_options = [f"{first} {last}" for _, first, last in athletes]
+athlete_options = [f"{nickname}" for _, nickname in athletes]
 selected_athlete_index = st.selectbox("Select Athlete", range(len(athletes)), format_func=lambda i: athlete_options[i])
 selected_athlete = athletes[selected_athlete_index]
 selected_athlete_id = selected_athlete[0]
-selected_athlete_name = f"{selected_athlete[1]} {selected_athlete[2]}"
+selected_athlete_name = f"{selected_athlete[1]}"
 
 # Bib number input
 bib_number = st.text_input("Enter Bib Number (Optional)").strip()

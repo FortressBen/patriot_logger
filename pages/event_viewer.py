@@ -66,15 +66,15 @@ else:
 st.header("Checked-In Athletes")
 
 checked_in_athletes = conn.execute("""
-    SELECT a.first_name, a.last_name, ac.checkin_time
+    SELECT a.nickname, ac.checkin_time
     FROM athlete_checkins ac
     JOIN athletes a ON ac.athlete_id = a.id
     WHERE ac.event_id = ?
-    ORDER BY a.last_name, a.first_name
+    ORDER BY a.nickname
 """, (selected_event_id,)).fetchall()
 
 if checked_in_athletes:
-    for first_name, last_name, checkin_time in checked_in_athletes:
-        st.write(f"{first_name} {last_name} (Checked in at {checkin_time})")
+    for nickname, checkin_time in checked_in_athletes:
+        st.write(f"{nickname} (Checked in at {checkin_time})")
 else:
     st.write("No athletes checked in for this event yet.")
