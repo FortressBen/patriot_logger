@@ -10,7 +10,8 @@ conn = duckdb.connect("motherduck.duckdb")
 ATHLETE_GROUPS = {
     1: "Varsity",
     2: "Subvarsity",
-    3: "JV"
+    3: "JV",
+    4: "Adults"
 }
 
 # Show group selection for CSV upload - user must assign groups in CSV by ID or Name?
@@ -18,7 +19,7 @@ st.write("Athlete groups are hardcoded:")
 for id_, name in ATHLETE_GROUPS.items():
     st.write(f"{id_}: {name}")
 
-uploaded_file = st.file_uploader("Upload CSV file with columns: nickname, recorder_nickname, group_id (1=Varsity, 2=Subvarsity, 3=JV)", type=["csv"])
+uploaded_file = st.file_uploader("Upload CSV file with columns: nickname, recorder_nickname, group_id (1=Varsity, 2=Subvarsity, 3=JV, 4=Adults/Coaches)", type=["csv"])
 
 if uploaded_file:
     try:
@@ -31,7 +32,7 @@ if uploaded_file:
             # Validate group_id values
             invalid_groups = set(df['group_id']) - set(ATHLETE_GROUPS.keys())
             if invalid_groups:
-                st.error(f"Invalid group_id values in CSV: {invalid_groups}. Use 1, 2, or 3.")
+                st.error(f"Invalid group_id values in CSV: {invalid_groups}. Use 1, 2, 3, or 4.")
             else:
                 if st.button("Upload Athletes"):
                     # Assign IDs to athletes

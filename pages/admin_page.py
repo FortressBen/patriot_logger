@@ -12,6 +12,14 @@ CREATE TABLE IF NOT EXISTS athlete_groups (
     group_name TEXT
 );
 
+DELETE FROM athlete_groups;
+INSERT INTO athlete_groups (id,group_name)
+VALUES
+(1,'Varsity'),
+(2,'Subvarsity'),
+(3,'JV'),
+(4,'Adults/Coaches');
+
 CREATE TABLE IF NOT EXISTS athletes (
     id INTEGER,
     nickname TEXT,
@@ -27,8 +35,17 @@ CREATE TABLE IF NOT EXISTS events (
 
 CREATE TABLE IF NOT EXISTS split_ids (
     id INTEGER,
-    description TEXT
+    split_name TEXT
 );
+
+DELETE FROM split_ids;
+INSERT INTO split_ids (id, split_name)
+VALUES
+(1,'0.5 Mile'),
+(2,'1 Mile'),
+(3,'2 Mile'),
+(4,'2.6 Mile'),
+(5,'Final');
 
 CREATE TABLE IF NOT EXISTS split_times (
     id INTEGER,

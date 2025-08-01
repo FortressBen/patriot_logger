@@ -10,7 +10,8 @@ conn = duckdb.connect("motherduck.duckdb")
 ATHLETE_GROUPS = {
     1: "Varsity",
     2: "Subvarsity",
-    3: "JV"
+    3: "JV",
+    4: "Adults/Coaches"
 }
 
 SPLIT_LOCATIONS = {
@@ -23,7 +24,6 @@ SPLIT_LOCATIONS = {
 
 # Select event
 events = conn.execute("SELECT id, event_name, date FROM events ORDER BY date DESC").fetchall()
-print(events)
 if not events:
     st.warning("No events found. Please add events on the Event Entry page.")
     st.stop()
