@@ -23,6 +23,7 @@ SPLIT_LOCATIONS = {
 
 # Select event
 events = conn.execute("SELECT id, event_name, date FROM events ORDER BY date DESC").fetchall()
+print(events)
 if not events:
     st.warning("No events found. Please add events on the Event Entry page.")
     st.stop()
@@ -30,6 +31,14 @@ if not events:
 event_options = [f"{name} ({date})" for _, name, date in events]
 selected_event_idx = st.selectbox("Select Event", range(len(events)), format_func=lambda i: event_options[i])
 selected_event_id = events[selected_event_idx][0]
+
+# Select Recorder
+recorders = conn.execute("SELECT DISTINCT recorder_nickname FROM athletes ORDER BY recorder_nickname").df()
+recorders = (list(recorders['recorder_nickname']))
+
+recorder_options = [f"{recorder_nickname}" for recorder_nickname in recorders]
+selected_recorder_idx = st.selectbox("Select Recorder Name", range(len(recorders)), format_func=lambda i: recorder_options[i])
+selected_recorder_id = recorders[selected_recorder_idx]
 
 # Select split location (pills style)
 selected_split_id = st.radio(
@@ -57,10 +66,10 @@ def get_athletes_by_group(group_id):
         FROM athletes a
         LEFT JOIN athlete_checkins ac
             ON a.id = ac.athlete_id AND ac.event_id = ?
-        WHERE a.group_id = ?
+        WHERE a.group_id = ? AND a.recorder_nickname = ?
         ORDER BY a.nickname
     """
-    return conn.execute(query, [selected_event_id, group_id]).fetchall()
+    return conn.execute(query, [selected_event_id, group_id, selected_recorder_id]).fetchall()
 
 def record_split(athlete_id, split_id, split_seconds):
     existing = conn.execute(
