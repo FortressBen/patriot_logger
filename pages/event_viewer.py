@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS events (
 """)
 
 # Fetch events sorted by date descending
-events = conn.execute("SELECT id, event_name, date FROM events ORDER BY date DESC").fetchall()
+events = conn.execute("SELECT id, event_name, date FROM events ORDER BY date").fetchall()
 if not events:
     st.info("No events found. Please add events on the Event Entry page.")
     st.stop()

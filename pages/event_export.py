@@ -8,7 +8,7 @@ st.title("Event Export")
 conn = duckdb.connect("motherduck.duckdb")
 
 # Get list of events
-events = conn.execute("SELECT id, event_name, date FROM events ORDER BY date DESC").fetchall()
+events = conn.execute("SELECT id, event_name, date FROM events ORDER BY date").fetchall()
 
 if not events:
     st.info("No events found.")
