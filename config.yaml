@@ -1,0 +1,32 @@
+cookie:
+  expiry_days: 30
+  key: some_signature_key
+  name: some_cookie_name
+credentials:
+  usernames:
+    ben:
+      email: fortressben@gmail.com
+      failed_login_attempts: 0
+      logged_in: true
+      name: Ben
+      password: $2b$12$2IA5RqEoGZ34aXEiUAYpoeKlmpbR7voLkVH1BWvZ79dCa9Q5880Ku
+      role: captain
+    kylem:
+      email: kylemirichmusic@gmail.com
+      name: Kyle Mirich
+      password: $2b$12$2IA5RqEoGZ34aXEiUAYpoeKlmpbR7voLkVH1BWvZ79dCa9Q5880Ku
+      role: coach
+    rbriggs:
+      email: rbriggs@gmail.com
+      name: Rebecca Briggs
+      password: $2b$12$2IA5RqEoGZ34aXEiUAYpoeKlmpbR7voLkVH1BWvZ79dCa9Q5880Ku
+      role: student
+preauthorized:
+  emails:
+  - melsby@gmail.com
+smtp:
+  password: your_app_password
+  port: 587
+  server: smtp.gmail.com
+  use_tls: true
+  username: your_email_address

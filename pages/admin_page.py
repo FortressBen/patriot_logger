@@ -1,8 +1,14 @@
 import streamlit as st
 import duckdb
+from pages.account import get_roles
+from streamlit import session_state as ss
+from auth import check_logged_in,AUTH_STATUS_KEY,get_role_for_user
+
+check_logged_in()
 
 st.title("Admin Page")
 st.write("Administrative tools for database and configuration.")
+user_role = get_role_for_user(ss.username)
 
 conn = duckdb.connect("motherduck.duckdb")
 
@@ -64,12 +70,15 @@ CREATE TABLE IF NOT EXISTS athlete_checkins (
 );
 """
 
-if st.button("Create Database Tables"):
-    try:
-        conn.execute(create_tables_sql)
-        st.success("Tables created successfully in motherduck.duckdb.")
-    except Exception as e:
-        st.error(f"Error creating tables: {e}")
+if user_role == 'admin':
+    if st.button("Create Database Tables"):
+        try:
+            conn.execute(create_tables_sql)
+            st.success("Tables created successfully in motherduck.duckdb.")
+        except Exception as e:
+            st.error(f"Error creating tables: {e}")
+else:
+    st.write("No create tables for you.")
 
 st.header("Run Custom SQL")
 
