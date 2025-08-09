@@ -1,10 +1,9 @@
 import streamlit as st
-import duckdb
+from db import conn
 from datetime import datetime
+from page_components import make_header
+make_header("Athlete Check-In")
 
-st.title("Athlete Check-In")
-
-conn = duckdb.connect("motherduck.duckdb")
 
 # Fetch events
 events = conn.execute("SELECT id, event_name, date FROM events ORDER BY date").fetchall()

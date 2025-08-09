@@ -1,26 +1,11 @@
 import streamlit as st
-import duckdb
+from db import conn,get_athlete_groups,get_split_locations
 from datetime import datetime
+from page_components import make_header
+make_header("Split Logger")
 
-st.title("Split Logger")
-
-conn = duckdb.connect("motherduck.duckdb")
-
-# Hardcoded groups and splits
-ATHLETE_GROUPS = {
-    1: "Varsity",
-    2: "Subvarsity",
-    3: "JV",
-    4: "Adults/Coaches"
-}
-
-SPLIT_LOCATIONS = {
-    1: "0.5 mile",
-    2: "1 mile",
-    3: "2 mile",
-    4: "2.6 mile",
-    5: "Final"
-}
+ATHLETE_GROUPS = get_athlete_groups()
+SPLIT_LOCATIONS= get_split_locations().set_index('id')['split_name'].to_dict()
 
 # Select event
 events = conn.execute("SELECT id, event_name, date FROM events ORDER BY date").fetchall()
@@ -35,6 +20,10 @@ selected_event_id = events[selected_event_idx][0]
 # Select Recorder
 recorders = conn.execute("SELECT DISTINCT recorder_nickname FROM athletes ORDER BY recorder_nickname").df()
 recorders = (list(recorders['recorder_nickname']))
+
+if len(recorders) == 0:
+    st.warning("Load Some Athletes First.")
+    st.stop()
 
 recorder_options = [f"{recorder_nickname}" for recorder_nickname in recorders]
 selected_recorder_idx = st.selectbox("Select Recorder Name", range(len(recorders)), format_func=lambda i: recorder_options[i])

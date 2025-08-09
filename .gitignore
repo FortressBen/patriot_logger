@@ -2,7 +2,11 @@
 __pycache__/
 *.py[codz]
 *$py.class
-
+.idea/*
+.idea/misc.xml
+.ideal/patriot_logger.iml
+.streamlit/secrets.toml
+mann_xc.duckdb
 # C extensions
 *.so
 

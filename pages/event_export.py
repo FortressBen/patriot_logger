@@ -1,11 +1,8 @@
 import streamlit as st
-import duckdb
-import pandas as pd
+from db import conn
+from page_components import make_header
+make_header("Event Export")
 
-st.title("Event Export")
-
-# Connect to DuckDB
-conn = duckdb.connect("motherduck.duckdb")
 
 # Get list of events
 events = conn.execute("SELECT id, event_name, date FROM events ORDER BY date").fetchall()

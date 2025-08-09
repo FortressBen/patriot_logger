@@ -1,20 +1,12 @@
 import streamlit as st
-import duckdb
+from db import conn
 import datetime
-import time
+from login import get_user_role,ADMIN_ROLE
+from page_components import make_header
+make_header("Split Logger")
 
-st.title("Event Viewer and Race Clock")
 
-conn = duckdb.connect("motherduck.duckdb")
-
-# Create events table if not exists
-conn.execute("""
-CREATE TABLE IF NOT EXISTS events (
-    id INTEGER PRIMARY KEY,
-    event_name TEXT NOT NULL,
-    date TEXT NOT NULL
-)
-""")
+user_role = get_user_role()
 
 # Fetch events sorted by date descending
 events = conn.execute("SELECT id, event_name, date FROM events ORDER BY date").fetchall()
@@ -39,18 +31,19 @@ if 'race_clock_start_times' not in st.session_state:
 # Buttons for starting and stopping the race clock
 col1, col2 = st.columns(2)
 
-with col1:
-    if st.button("Start Race Clock"):
-        st.session_state.race_clock_start_times[selected_event_id] = datetime.datetime.now()
-        st.success("Race clock started!")
+if user_role  == ADMIN_ROLE:
+    with col1:
+        if st.button("Start Race Clock"):
+            st.session_state.race_clock_start_times[selected_event_id] = datetime.datetime.now()
+            st.success("Race clock started!")
 
-with col2:
-    if st.button("Stop Race Clock"):
-        if selected_event_id in st.session_state.race_clock_start_times:
-            del st.session_state.race_clock_start_times[selected_event_id]
-            st.success("Race clock stopped!")
-        else:
-            st.warning("Race clock is not running.")
+    with col2:
+        if st.button("Stop Race Clock"):
+            if selected_event_id in st.session_state.race_clock_start_times:
+                del st.session_state.race_clock_start_times[selected_event_id]
+                st.success("Race clock stopped!")
+            else:
+                st.warning("Race clock is not running.")
 
 # Display live race timer if started
 if selected_event_id in st.session_state.race_clock_start_times:

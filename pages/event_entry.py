@@ -1,37 +1,8 @@
 import streamlit as st
-import duckdb
+from db import conn
 
-st.title("Event Entry")
-
-# Connect to DuckDB
-conn = duckdb.connect("motherduck.duckdb")
-
-# Ensure necessary tables exist
-conn.execute("""
-CREATE TABLE IF NOT EXISTS events (
-    id INTEGER,
-    event_name TEXT,
-    date TEXT
-)
-""")
-
-conn.execute("""
-CREATE TABLE IF NOT EXISTS athlete_checkins (
-    athlete_id INTEGER,
-    event_id INTEGER,
-    checkin_time TEXT,
-    bib_number TEXT
-)
-""")
-
-conn.execute("""
-CREATE TABLE IF NOT EXISTS athletes (
-    id INTEGER,
-    first_name TEXT,
-    last_name TEXT,
-    group_id INTEGER
-)
-""")
+from page_components import make_header
+make_header("Event Entry")
 
 # Form to add a new event
 with st.form("add_event_form"):

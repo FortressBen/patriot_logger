@@ -2,7 +2,31 @@ import streamlit as st
 from streamlit import session_state as ss
 import yaml
 from yaml.loader import SafeLoader
+
 CONFIG_FILENAME = 'config.yaml'
+
+def get_config():
+    return None
+
+def read_user_config():
+    "read the config file, but then add secrets from secrets.toml"
+    with open(CONFIG_FILENAME) as file:
+        config = yaml.load(file, Loader=SafeLoader)
+
+
+def get_roles():
+    """Gets user roles based on config file."""
+    with open(CONFIG_FILENAME) as file:
+        config = yaml.load(file, Loader=SafeLoader)
+
+    if config is not None:
+        cred = config['credentials']
+    else:
+        cred = {}
+
+    return {username: user_info['role'] for username, user_info in cred['usernames'].items() if 'role' in user_info}
+
+
 
 AUTH_STATUS_KEY = 'authentication_status'
 def check_logged_in():
