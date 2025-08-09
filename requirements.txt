@@ -1,4 +1,7 @@
 streamlit
 numpy
 duckdb
-streamlit_authenticator
+motherduck
+pandas
+extra-streamlit-components
+streamlit_js_eval
