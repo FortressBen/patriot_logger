@@ -117,7 +117,7 @@ def check_logged_in():
 
                         cookie_manager.set(LOGIN_COOKIE_NAME,role,expires_at=expiry_date)
                         #this is important-- give time to send the cookie to the browser
-                        time.sleep(1)
+                        time.sleep(2.0)
                         st.session_state[TEMP_SESSION_STATE_LOGIN] = role
                         _reload_page()
                         st.stop()
