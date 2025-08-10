@@ -29,28 +29,48 @@ if 'race_clock_start_times' not in st.session_state:
     st.session_state.race_clock_start_times = {}
 
 # Buttons for starting and stopping the race clock
-col1, col2 = st.columns(2)
+col1, col2, col3 = st.columns(3)
+
+current_start_time, current_end_time = conn.execute("""
+    select start_time, end_time from events where id = ?
+""",[selected_event_id]).fetchone()
+
 
 if user_role  == ADMIN_ROLE:
     with col1:
-        if st.button("Start Race Clock"):
-            st.session_state.race_clock_start_times[selected_event_id] = datetime.datetime.now()
-            st.success("Race clock started!")
+        if current_start_time is None and current_end_time is None:
+            if st.button("Start Race Clock"):
+                #st.session_state.race_clock_start_times[selected_event_id] = datetime.datetime.now()
+                conn.execute("""
+                        UPDATE events
+                        SET start_time = CURRENT_TIMESTAMP
+                        WHERE id = ?
+                    """, [selected_event_id])
+                st.success("Race clock started!")
 
     with col2:
-        if st.button("Stop Race Clock"):
-            if selected_event_id in st.session_state.race_clock_start_times:
-                del st.session_state.race_clock_start_times[selected_event_id]
+        if current_start_time is not None and current_end_time is None:
+            if st.button("Stop Race Clock"):
+                #del st.session_state.race_clock_start_times[selected_event_id]
+                conn.execute("""
+                        UPDATE events
+                        SET end_time = CURRENT_TIMESTAMP
+                        WHERE id = ?
+                    """, [selected_event_id])
                 st.success("Race clock stopped!")
-            else:
-                st.warning("Race clock is not running.")
+
+    with col3:
+        if st.button("Reset Clocks"):
+            conn.execute("""
+                UPDATE events
+                SET start_time = NULL, end_time = NULL
+                WHERE id = ?
+            """, [selected_event_id])
+            st.success("Race clocks reset!")
 
 # Display live race timer if started
-if selected_event_id in st.session_state.race_clock_start_times:
-    start_time = st.session_state.race_clock_start_times[selected_event_id]
-    # Calculate elapsed time
-    elapsed = datetime.datetime.now() - start_time
-    # Display as hh:mm:ss
+if current_start_time is not None and current_end_time is None:
+    elapsed = datetime.datetime.now() - current_start_time
     st.markdown(f"**Race Clock Running:** {str(elapsed).split('.')[0]}")
 else:
     st.markdown("**Race Clock is stopped.**")

@@ -1,7 +1,7 @@
 import streamlit as st
 import duckdb
 
-LOCAL_MODE = False
+LOCAL_MODE = True
 ACCESS_TOKEN=st.secrets.get('motherduck',{}).get('token',None)
 MOTHERDUCK_DB_NAME = "patriot_logger"
 LOCAL_DUCKDB_NAME = "mann_xc.duckdb"
@@ -18,6 +18,16 @@ def get_athlete_groups():
 
 def get_split_locations():
     return conn.execute("select id, split_name from split_ids").df()
+
+def delete_tables():
+    conn.execute("""
+    DROP TABLE IF EXISTS athlete_groups;
+    DROP TABLE IF EXISTS athletes;
+    DROP TABLE IF EXISTS events;
+    DROP TABLE IF EXISTS split_ids;
+    DROP TABLE IF EXISTS split_times;
+    DROP TABLE IF EXISTS athlete_checkins
+    """)
 
 def create_tables():
 
@@ -45,7 +55,9 @@ def create_tables():
     CREATE TABLE IF NOT EXISTS events (
         id INTEGER,
         event_name TEXT,
-        date TEXT
+        date TEXT,
+        start_time TIMESTAMP,
+        end_time TIMESTAMP
     );
 
     CREATE TABLE IF NOT EXISTS split_ids (
