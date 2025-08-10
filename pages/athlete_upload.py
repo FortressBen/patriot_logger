@@ -1,23 +1,15 @@
 import streamlit as st
-import duckdb
+from db import conn,get_athlete_groups
 import pandas as pd
+from page_components import make_header
 
-st.title("Athlete Upload")
-
-conn = duckdb.connect("motherduck.duckdb")
-
-# Hardcoded athlete groups dict (ID -> Name)
-ATHLETE_GROUPS = {
-    1: "Varsity",
-    2: "Subvarsity",
-    3: "JV",
-    4: "Adults"
-}
+make_header("Athlete Upload")
 
 # Show group selection for CSV upload - user must assign groups in CSV by ID or Name?
 st.write("Athlete groups are hardcoded:")
-for id_, name in ATHLETE_GROUPS.items():
-    st.write(f"{id_}: {name}")
+athlete_groups = get_athlete_groups()
+valid_group_ids = athlete_groups['id'].to_list()
+st.dataframe( athlete_groups,hide_index=True,width=200,)
 
 uploaded_file = st.file_uploader("Upload CSV file with columns: nickname, recorder_nickname, group_id (1=Varsity, 2=Subvarsity, 3=JV, 4=Adults/Coaches)", type=["csv"])
 
@@ -30,7 +22,7 @@ if uploaded_file:
             st.error("CSV must contain columns: nickname, recorder_nickname, group_id")
         else:
             # Validate group_id values
-            invalid_groups = set(df['group_id']) - set(ATHLETE_GROUPS.keys())
+            invalid_groups = set(df['group_id']) - set(valid_group_ids)
             if invalid_groups:
                 st.error(f"Invalid group_id values in CSV: {invalid_groups}. Use 1, 2, 3, or 4.")
             else:

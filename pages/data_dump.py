@@ -1,11 +1,8 @@
 import streamlit as st
-import duckdb
-import pandas as pd
+from db import conn
+from page_components import make_header
 
-st.title("Data Dump")
-
-# Connect to DuckDB
-conn = duckdb.connect("motherduck.duckdb")
+make_header("Data Dump")
 
 a_df = conn.execute("SELECT * FROM athletes").df()
 e_df = conn.execute("SELECT * FROM events").df()
