@@ -10,13 +10,14 @@ ALL_PAGES = {
     "pages/event_export.py": "Event Export",
     "pages/event_viewer.py": "Event Status",
     "pages/split_groups_entry.py": "Split Group Entry" ,
-    "pages/split_logger.py": "Log Splits"
+    "pages/split_logger.py": "Log Splits",
+    "pages/logout.py": "Log Out"
 }
 ALL_PAGE_KEYS=list(ALL_PAGES.keys())
 
 PAGES_BY_ROLE = {
     "admin": ALL_PAGE_KEYS,
-    "student": ["home.py", "pages/split_logger.py", "pages/event_viewer.py"],
+    "student": ["home.py", "pages/split_logger.py", "pages/event_viewer.py","pages/logout.py"],
 }
 
 def make_nav():
