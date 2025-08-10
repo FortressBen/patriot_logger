@@ -4,7 +4,7 @@ from datetime import datetime
 from page_components import make_header
 make_header("Split Logger")
 
-ATHLETE_GROUPS = get_athlete_groups()
+ATHLETE_GROUPS = get_athlete_groups().set_index('id')['group_name'].to_dict()
 SPLIT_LOCATIONS= get_split_locations().set_index('id')['split_name'].to_dict()
 
 # Select event
@@ -38,11 +38,14 @@ selected_split_id = st.radio(
 )
 
 # Retrieve race clock start time for the selected event
-start_time_raw = st.session_state.get("race_clock_start_times", {}).get(selected_event_id)
-if start_time_raw and isinstance(start_time_raw, str):
-    start_time = datetime.fromisoformat(start_time_raw)
-else:
-    start_time = start_time_raw
+
+#start_time_raw = st.session_state.get("race_clock_start_times", {}).get(selected_event_id)
+start_time = conn.execute("SELECT start_time from events WHERE id = ?", [selected_event_id]).fetchone()[0]
+# if start_time_raw and isinstance(start_time_raw, str):
+#     start_time = datetime.fromisoformat(start_time_raw)
+# else:
+#     start_time = start_time_raw
+
 
 if start_time is None:
     st.error("Race clock for this event has not been started yet. Please start the clock on the Event Viewer page.")

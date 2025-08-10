@@ -1,11 +1,12 @@
 import streamlit as st
 from page_components import make_header
-from db import conn,create_tables
+from db import conn,create_tables, delete_tables
 
 make_header("Administration")
 
 if st.button("Create Database Tables"):
     try:
+        delete_tables()
         create_tables()
         st.success("Tables created successfully in motherduck.duckdb.")
     except Exception as e:
