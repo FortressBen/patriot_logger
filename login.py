@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import extra_streamlit_components as stx
 from streamlit_js_eval import streamlit_js_eval
 import time
-
+from db import LOCAL_MODE
 cookie_manager = stx.CookieManager(key='patriot')
 SECRETS_TOML_NAME="logins"
 ADMIN_ROLE = 'admin'
@@ -114,10 +114,17 @@ def check_logged_in():
                 role_dict = get_roles_dict()
                 for role,right_password in role_dict.items():
                     if right_password == supplied_password:
-
-                        cookie_manager.set(LOGIN_COOKIE_NAME,role,expires_at=expiry_date)
+                        if LOCAL_MODE:
+                            cookie_manager.set(LOGIN_COOKIE_NAME,role,expires_at=expiry_date)
+                        else:
+                            #need secure to work on streamlit cloud
+                            cookie_manager.set(name=LOGIN_COOKIE_NAME,
+                                               value=role,
+                                               expires_at=expiry_date,
+                                               secure=True
+                                               )
                         #this is important-- give time to send the cookie to the browser
-                        time.sleep(2.0)
+                        time.sleep(1.0)
                         st.session_state[TEMP_SESSION_STATE_LOGIN] = role
                         _reload_page()
                         st.stop()
