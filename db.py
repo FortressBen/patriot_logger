@@ -1,7 +1,7 @@
 import streamlit as st
 import duckdb
 
-LOCAL_MODE = False
+LOCAL_MODE = True
 ACCESS_TOKEN=st.secrets.get('motherduck',{}).get('token',None)
 MOTHERDUCK_DB_NAME = "patriot_logger"
 LOCAL_DUCKDB_NAME = "mann_xc.duckdb"
