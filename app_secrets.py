@@ -8,10 +8,10 @@ DEFAULT_CONFIG = {
     }
 }
 SETTINGS = Dynaconf(
-    settings_files=['.streamlit/secrets.toml'], environments=True,
+    settings_files=['.streamlit/secrets.toml'], environments=True,envvar_prefix="APP",
     validators=[
-        Validator("LOCAL_DB",must_exist=False,is_type_of=bool)
+        Validator("LOCAL_DB",is_type_of=bool)
     ])
 SETTINGS.update(DEFAULT_CONFIG)
-
+SETTINGS.validators.validate()
 print(f"Starting Settings: {SETTINGS.as_dict()}")
