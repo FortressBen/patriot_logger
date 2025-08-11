@@ -16,8 +16,8 @@ ALL_PAGES = {
 ALL_PAGE_KEYS=list(ALL_PAGES.keys())
 
 PAGES_BY_ROLE = {
-    "admin": ALL_PAGE_KEYS,
-    "student": ["home.py", "pages/split_logger.py", "pages/event_viewer.py","pages/logout.py"],
+    "ADMIN": ALL_PAGE_KEYS,
+    "STUDENT": ["home.py", "pages/split_logger.py", "pages/event_viewer.py","pages/logout.py"],
 }
 
 def make_nav():

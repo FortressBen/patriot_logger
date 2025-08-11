@@ -3,8 +3,8 @@ from datetime import datetime, timedelta
 import time
 from app_secrets import SETTINGS
 SECRETS_TOML_NAME="logins"
-ADMIN_ROLE = 'admin'
-STUDENT_ROLE = 'student'
+ADMIN_ROLE = 'ADMIN'
+STUDENT_ROLE = 'STUDENT'
 LOGIN_COOKIE_NAME = 'patriot_role37'
 
 def log_out():
