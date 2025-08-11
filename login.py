@@ -1,6 +1,7 @@
 import streamlit as st
 from datetime import datetime, timedelta
 import time
+from app_secrets import SETTINGS
 SECRETS_TOML_NAME="logins"
 ADMIN_ROLE = 'admin'
 STUDENT_ROLE = 'student'
@@ -46,14 +47,15 @@ def check_logged_in():
 
 
     def get_roles_dict():
-        if st.secrets.has_key(SECRETS_TOML_NAME):
-            return st.secrets.get(SECRETS_TOML_NAME)
-        else:
-
-            return {
-                'admin': 'admin',
-                'student': 'student'
-            }
+        return SETTINGS["LOGINS"]
+        # if st.secrets.has_key(SECRETS_TOML_NAME):
+        #     return st.secrets.get(SECRETS_TOML_NAME)
+        # else:
+        #
+        #     return {
+        #         'admin': 'admin',
+        #         'student': 'student'
+        #     }
 
     if not is_logged_in():
         #display Login banner

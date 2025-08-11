@@ -4,4 +4,4 @@ duckdb
 motherduck
 pandas
 extra-streamlit-components
-streamlit_js_eval
+dynaconf
