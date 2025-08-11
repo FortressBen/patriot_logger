@@ -10,6 +10,10 @@ SETTINGS = Dynaconf(
 DEFAULT_DB_PATH="mann_xc.duckdb"
 SETTINGS.validators.validate()
 
+if "LOCAL_DB" not in SETTINGS.as_dict():
+    print(f"Warning: LOCAL_DB not set, assuming True")
+    SETTINGS['LOCAL_DB'] = True
+
 if SETTINGS['LOCAL_DB'] == True:
     if not "DB_PATH" in SETTINGS.as_dict().keys():
         print(f"Warning: LOCAL_DB= True, but DB_PATH not set, using {DEFAULT_DB_PATH}")
