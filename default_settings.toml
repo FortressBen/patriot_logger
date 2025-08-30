@@ -2,3 +2,7 @@
 #Start with a local duckdb database
 LOCAL_DB=true
 DB_PATH="mann_xc.duckdb"
+
+[default.LOGINS]
+ADMIN="a"
+STUDENT="s"
