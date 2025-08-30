@@ -5,3 +5,4 @@ motherduck
 pandas
 extra-streamlit-components
 dynaconf
+streamlit_js_eval
